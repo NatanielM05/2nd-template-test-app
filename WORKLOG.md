@@ -2,6 +2,46 @@
 
 ## Implemented:
 
+### 2025-10-07 - ToDo-App Complete Implementation
+- **OpenAPI Specification**: Vollständige API-Spezifikation für Tasks (GET, POST, PUT, DELETE)
+  - Task Schema mit title, description, status, dueDate, category
+  - Filtering (status, category, search)
+  - Sorting (createdAt, dueDate, title)
+  - Validation und Error Responses
+- **Database (JSON-DB)**:
+  - Vollständige Database-Implementierung mit lowdb
+  - CRUD-Operationen für Tasks
+  - Filtering und Sorting-Logik
+  - Automatische Ordner-Erstellung
+- **Backend API**:
+  - Express.js Server mit TypeScript
+  - Zod Validation für alle Requests
+  - Error Handling Middleware
+  - Health Check Endpoint
+  - Tasks CRUD Endpoints mit Filtering/Sorting
+- **Frontend (React + Vite)**:
+  - Complete Vite + TypeScript + Tailwind CSS Setup
+  - TanStack Query für Server State Management
+  - React Router für Navigation
+  - Wiederverwendbare UI-Components (Button, Input, Checkbox, Card)
+  - Task-Components (TaskForm, TaskItem, TaskList, TaskFilters)
+  - Responsive, minimalistisches Design
+  - Deutsche Lokalisierung
+  - Date Formatting mit date-fns
+  - Optimistic Updates
+- **Features**:
+  - ✅ Aufgaben erstellen mit Titel, Beschreibung, Fälligkeitsdatum, Kategorie
+  - ✅ Aufgaben als offen/erledigt markieren (Checkbox)
+  - ✅ Aufgaben bearbeiten und löschen
+  - ✅ Filtern nach Status (alle, offen, erledigt)
+  - ✅ Suche in Titel und Beschreibung
+  - ✅ Sortierung nach Erstellungsdatum, Fälligkeitsdatum, Titel
+  - ✅ Statistik-Dashboard (Gesamt, Offen, Erledigt)
+  - ✅ Expandierbare Aufgaben-Details
+- **Documentation**:
+  - ROADMAP.md mit allen Phasen und Tasks
+  - .env.example mit allen benötigten Variablen
+
 ### 2025-10-07 - Template-Vervollständigung
 - **Basis-Konfiguration**: pnpm-workspace.yaml, tsconfig.json, tsconfig.base.json, .gitignore erstellt
 - **Linting & Formatting**: ESLint (flat config), Prettier-Konfiguration hinzugefügt
@@ -32,9 +72,7 @@
 - Configured infrastructure to remain in eu-central-1 for GDPR compliance
 
 ## Next:
-- Deploy auth-portal stack and create initial Cognito users for testing
-- Connect frontend prototype (`/app`) to auth-portal via API Gateway
-- Integrate OpenSearch Dashboards proxy (`/opensearch`) with Cognito auth
-- Re-introduce CI after dependency install succeeds
-- Automate OpenAPI type generation in CI
-- Install/align infra Lambda dependencies (`@aws-sdk/client-kinesis`, `pg`, etc.)
+- Optional: Dark Mode implementieren
+- Optional: LocalStorage Backup implementieren
+- Optional: Kategorien-Management verbessern
+- Optional: Tests schreiben (Vitest)

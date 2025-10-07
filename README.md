@@ -86,26 +86,39 @@ pnpm --filter @app/routes-portal dev  # Port 3002
 
 **Das war's! Template läuft sofort.**
 
-### 4. Mit KI entwickeln (Vibecoder-Workflow)
+### 4. App testen
 
-**Riesen-Prompt:**
+Nach erfolgreicher Installation kannst du die ToDo-App sofort nutzen:
 
-> "Lies ARCHITECTURE.md und AGENT.md.
->
-> Erstelle eine Todo-App:
-> - CRUD-API für Tasks (title, description, status, dueDate)
-> - React-Frontend mit Task-Liste und Formular
-> - Admin-Portal mit Statistiken
-> - Daten persistent in JSON-DB
-> - OpenAPI-Spezifikation
-> - Tests für API und Frontend
->
-> Befolge den 6-Phasen-Workflow aus AGENT.md.
-> Dokumentiere in ROADMAP.md und WORKLOG.md."
+```bash
+# In einem Terminal: Backend starten
+pnpm --filter @app/api dev
+# Läuft auf http://localhost:3001
 
-KI generiert automatisch komplette App → `pnpm dev` → läuft!
+# In einem zweiten Terminal: Frontend starten
+pnpm --filter @app/frontend dev
+# Läuft auf http://localhost:3000
+```
 
-### 5. Package Hot-Swap (Optional)
+**Features der ToDo-App:**
+- ✅ Aufgaben erstellen mit Titel, Beschreibung, Fälligkeitsdatum, Kategorie
+- ✅ Aufgaben als offen/erledigt markieren
+- ✅ Aufgaben löschen
+- ✅ Filtern nach Status (alle, offen, erledigt)
+- ✅ Suche in Titel und Beschreibung
+- ✅ Sortierung nach Datum oder Titel
+- ✅ Statistik-Dashboard
+
+### 5. Mit KI erweitern
+
+Du kannst die App mit KI erweitern:
+
+> "Füge Dark Mode zur ToDo-App hinzu:
+> - Toggle-Button im Header
+> - Zustand in localStorage speichern
+> - Tailwind dark: Klassen verwenden"
+
+### 6. Package Hot-Swap (Optional)
 
 **Frontend wechseln (React → Svelte):**
 

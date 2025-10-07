@@ -1,25 +1,351 @@
 openapi: 3.0.3
 info:
-  title: Application API
+  title: ToDo Application API
   description: |
-    REST API specification for the application.
+    REST API specification for the ToDo application.
 
-    **Note for AI Agents**:
-    This file should be generated based on the initial prompt and application requirements.
-    Follow these guidelines when creating the specification:
-    - Define all endpoints needed for the application
-    - Keep schemas in `components/schemas` for reusability
-    - Use consistent naming conventions (PascalCase for schemas, camelCase for properties)
-    - Include proper error responses and security schemes
-    - Add pagination parameters for list endpoints
-    - Document all request/response schemas
-  version: 0.0.1
+    Features:
+    - Task management (Create, Read, Update, Delete)
+    - Task status tracking (open, done)
+    - Optional due dates
+    - Optional categories/tags
+    - Search and filtering capabilities
+  version: 1.0.0
 
 servers:
-  - url: http://localhost:3000/v1
+  - url: http://localhost:3001/api/v1
     description: Local Development
 
-paths: {}
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      operationId: healthCheck
+      tags: [Health]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /tasks:
+    get:
+      summary: List all tasks
+      operationId: listTasks
+      tags: [Tasks]
+      parameters:
+        - name: status
+          in: query
+          description: Filter by task status
+          schema:
+            type: string
+            enum: [open, done]
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search in title and description
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [createdAt, dueDate, title]
+            default: createdAt
+        - name: sortOrder
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                  total:
+                    type: integer
+                    description: Total number of tasks
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new task
+      operationId: createTask
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /tasks/{id}:
+    get:
+      summary: Get a task by ID
+      operationId: getTask
+      tags: [Tasks]
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update a task
+      operationId: updateTask
+      tags: [Tasks]
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete a task
+      operationId: deleteTask
+      tags: [Tasks]
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
-  schemas: {}
+  parameters:
+    TaskId:
+      name: id
+      in: path
+      required: true
+      description: Task ID
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - title
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique task identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Task title
+          example: "Buy groceries"
+        description:
+          type: string
+          maxLength: 2000
+          description: Optional task description
+          example: "Milk, eggs, bread, and vegetables"
+        status:
+          type: string
+          enum: [open, done]
+          description: Task status
+          example: "open"
+        dueDate:
+          type: string
+          format: date-time
+          description: Optional due date
+          example: "2025-10-15T12:00:00Z"
+        category:
+          type: string
+          maxLength: 50
+          description: Optional category/tag
+          example: "shopping"
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2025-10-07T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2025-10-07T11:45:00Z"
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Task title
+          example: "Buy groceries"
+        description:
+          type: string
+          maxLength: 2000
+          description: Optional task description
+          example: "Milk, eggs, bread"
+        dueDate:
+          type: string
+          format: date-time
+          description: Optional due date
+          example: "2025-10-15T12:00:00Z"
+        category:
+          type: string
+          maxLength: 50
+          description: Optional category/tag
+          example: "shopping"
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Task title
+          example: "Buy groceries and supplies"
+        description:
+          type: string
+          maxLength: 2000
+          description: Task description
+          example: "Updated description"
+        status:
+          type: string
+          enum: [open, done]
+          description: Task status
+          example: "done"
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: Due date (null to clear)
+          example: "2025-10-16T12:00:00Z"
+        category:
+          type: string
+          maxLength: 50
+          nullable: true
+          description: Category (null to clear)
+          example: "personal"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error type
+          example: "ValidationError"
+        message:
+          type: string
+          description: Error message
+          example: "Title is required"
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "ValidationError"
+            message: "Title is required"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "NotFound"
+            message: "Task not found"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "InternalServerError"
+            message: "An unexpected error occurred"
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Tasks
+    description: Task management endpoints

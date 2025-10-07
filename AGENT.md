@@ -58,12 +58,18 @@ Von einem Prompt zu lauffähigem Code.
 3. IAM-Permissions (Least Privilege)
 4. Monitoring (CloudWatch Alarms)
 
-### Phase 6: Abschluss
-1. **Guardrails**: `pnpm guardrails`
-2. **Tests**: `pnpm test`
-3. **Build**: `pnpm -r build`
-4. **WORKLOG.md** aktualisieren: Was wurde implementiert
-5. **ROADMAP.md** aktualisieren: Tasks abhaken
+### Phase 6: Abschluss & Validation
+1. **Database testen**: `pnpm --filter @app/database test:init` (prüft ob DB-Init funktioniert)
+2. **Build testen**: `pnpm -r build` (MUSS ohne Fehler durchlaufen!)
+3. **Installation testen**: `pnpm install` (frische Installation simulieren)
+4. **Server starten**:
+   - Backend: `pnpm --filter @app/api dev` (muss ohne Errors starten)
+   - Frontend: `pnpm --filter @app/frontend dev` (muss ohne Errors starten)
+5. **Manuelle Tests**: API mit curl/Postman testen, Frontend im Browser öffnen
+6. **WORKLOG.md** aktualisieren: Was wurde implementiert
+7. **ROADMAP.md** aktualisieren: Tasks abhaken
+
+**⚠️ KRITISCH**: Wenn `pnpm -r build` fehlschlägt, MUSST du die Fehler beheben!
 
 ---
 
